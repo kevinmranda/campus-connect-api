@@ -10,6 +10,7 @@ type User struct {
 	ProfileImage string
 	Role         string
 	Course       string
+	Phone        string `gorm:"unique;not null"`
 	Year         string
 	Password     string `gorm:"not null"`
 	Email        string `gorm:"unique;not null"`

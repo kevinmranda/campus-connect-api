@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
-	"github.com/group4/campus-connect-api/Helpers"
+
 	"github.com/gin-gonic/gin"
+	"github.com/group4/campus-connect-api/Helpers"
 	initializers "github.com/group4/campus-connect-api/Initializers"
 	models "github.com/group4/campus-connect-api/Models"
 	"golang.org/x/crypto/bcrypt"
@@ -76,6 +78,16 @@ func CreateUser(c *gin.Context) {
 			return
 		}
 	}
+
+	// Send SMS after successful user creation
+	message := fmt.Sprintf("Hello %s, your registration was successful!", user.Name)
+	recipients := []string{user.Phone}
+	go func() {
+		err := helpers.SendRegistrationSMS(message, recipients)
+		if err != nil {
+			fmt.Println("Failed to send SMS:", err)
+		}
+	}()
 
 	c.JSON(http.StatusCreated, gin.H{
 		"id":           user.ID,
